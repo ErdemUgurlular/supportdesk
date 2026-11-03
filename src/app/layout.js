@@ -1,5 +1,6 @@
 import "./globals.css";
 import MainLayout from "../components/layout/MainLayout";
+import AppProviders from "@/providers/AppProviders";
 
 export const metadata = {
   title: "SupportDesk",
@@ -10,7 +11,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <MainLayout>{children}</MainLayout>
+        <AppProviders>
+          <MainLayout>{children}</MainLayout>
+        </AppProviders>
       </body>
     </html>
   );

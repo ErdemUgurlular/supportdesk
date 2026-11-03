@@ -1,9 +1,15 @@
+"use client";
+
 import Link from "next/link";
 import NavLink from "./NavLink";
 
 import { navigationItems } from "@/lib/navigation-items";
+import { useAuth } from "@/hooks/useAuth";
 
-export default function MainNavigation({ role = "guest" }) {
+export default function MainNavigation() {
+  const { role } = useAuth();
+
+  // Get navigation links based on the current user role
   const links = navigationItems[role] ?? navigationItems.guest;
 
   return (
