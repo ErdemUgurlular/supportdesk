@@ -1,15 +1,11 @@
+import { getCurrentUser } from "@/lib/auth";
 import MainNavigation from "./MainNavigation";
 
 export default function MainLayout({ children }) {
-  // Temporary role for UI development
-  const dummyUser = {
-    name: "John",
-    role: "guest",
-  };
 
   return (
     <>
-      <MainNavigation role={dummyUser.role} />
+      <MainNavigation />
 
       <main>
         {children}

@@ -1,150 +1,124 @@
-.page {
-  --background: #fafafa;
-  --foreground: #fff;
 
-  --text-primary: #000;
-  --text-secondary: #666;
-
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
-
+.landingPage {
+  min-height: 100vh;
   display: flex;
-  flex: 1;
   flex-direction: column;
+  background: #f9fafb;
+}
+
+.hero {
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-geist-sans);
-  background-color: var(--background);
+  text-align: center;
+  padding: 6rem 1.5rem;
+  min-height: 430px;
 }
 
-.main {
-  display: flex;
-  flex: 1;
-  width: 100%;
-  max-width: 800px;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  background-color: var(--foreground);
-  padding: 120px 60px;
+.heroContent {
+  max-width: 700px;
 }
 
-.intro {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  gap: 24px;
-}
-
-.intro h1 {
-  max-width: 320px;
-  font-size: 40px;
+.eyebrow {
+  color: #2563eb;
   font-weight: 600;
-  line-height: 48px;
-  letter-spacing: -2.4px;
-  text-wrap: balance;
-  color: var(--text-primary);
+  font-size: 0.9rem;
 }
 
-.intro p {
-  max-width: 440px;
-  font-size: 18px;
-  line-height: 32px;
-  text-wrap: balance;
-  color: var(--text-secondary);
+.hero h1 {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  line-height: 1.15;
+  color: #111827;
+  margin: 1rem 0;
 }
 
-.intro a {
-  font-weight: 500;
-  color: var(--text-primary);
+.hero h1 span {
+  color: #2563eb;
 }
 
-.ctas {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 440px;
-  gap: 16px;
-  font-size: 14px;
+.heroContent > p {
+  color: #6b7280;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 2rem;
 }
 
-.ctas a {
+.heroActions {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 128px;
-  border: 1px solid transparent;
-  transition: 0.2s;
-  cursor: pointer;
-  width: fit-content;
-  font-weight: 500;
+  gap: 1rem;
 }
 
-a.primary {
-  background: var(--text-primary);
-  color: var(--background);
-  gap: 8px;
+.primaryButton,
+.secondaryButton {
+  padding: 0.85rem 1.5rem;
+  border-radius: 7px;
+  font-weight: 600;
+  text-decoration: none;
 }
 
-a.secondary {
-  border-color: var(--button-secondary-border);
+.primaryButton {
+  background: #2563eb;
+  color: #ffffff;
 }
 
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
-  }
-
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
-  }
+.secondaryButton {
+  border: 1px solid #d1d5db;
+  color: #374151;
+  background: #ffffff;
 }
 
-@media (max-width: 600px) {
-  .main {
-    padding: 48px 24px;
-  }
-
-  .intro {
-    gap: 16px;
-  }
-
-  .intro h1 {
-    font-size: 32px;
-    line-height: 40px;
-    letter-spacing: -1.92px;
-  }
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  padding: 2rem 8% 4rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
-  }
-
-  .page {
-    --background: #000;
-    --foreground: #000;
-
-    --text-primary: #ededed;
-    --text-secondary: #999;
-
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
-  }
+.featureCard {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  padding: 1.75rem;
+  border-radius: 10px;
 }
 
-.code {
-  font-family: var(--font-geist-mono);
-  font-size: 0.9em;
-  background: color-mix(in srgb, currentColor 8%, transparent);
-  padding: 0.1em 0.4em;
-  border-radius: 6px;
+.featureCard h2 {
+  color: #1f2937;
+  font-size: 1.1rem;
+  margin: 0 0 0.75rem;
+}
+
+.featureCard p {
+  color: #6b7280;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.footer {
+  margin-top: auto;
+  padding: 1.5rem;
+  text-align: center;
+  border-top: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 700px) {
+  .header {
+    padding: 1.25rem 5%;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+    padding: 1rem 5% 3rem;
+  }
+
+  .hero {
+    padding: 4rem 1.25rem;
+  }
+
+  .heroActions {
+    flex-direction: column;
+  }
 }

@@ -1,20 +1,23 @@
-'use client'
+
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function NavLink({href, children}) {
+import styles from "./NavLink.module.css";
+
+export default function NavLink({ href, children }) {
   const pathname = usePathname();
 
-  /* const isActive =
+  const isActive =
     pathname === href ||
-    (href !== "/" && pathname.startsWith(`${href}/`)); */
+    (href !== "/" && pathname.startsWith(`${href}/`));
 
   return (
     <Link
-      href={
-        href
-      } /*Use it for styling later className={isActive ? `${classes.link} ${classes.active}` : `${classes.link}`} */
+      href={href}
+      className={`${styles.link} ${isActive ? styles.active : ""}`}
+      aria-current={isActive ? "page" : undefined}
     >
       {children}
     </Link>

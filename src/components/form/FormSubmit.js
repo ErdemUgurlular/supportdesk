@@ -2,11 +2,13 @@
 
 import { useFormStatus } from "react-dom";
 
-export default function FormSubmit({message}) {
+import styles from "./FormSubmit.module.css";
+
+export default function FormSubmit({ message }) {
   const { pending } = useFormStatus();
 
   return (
-    <button type="submit" disabled={pending}>
+    <button type="submit" disabled={pending} className={styles.submitButton}>
       {pending ? "Submitting..." : message}
     </button>
   );

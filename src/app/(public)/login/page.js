@@ -1,25 +1,50 @@
 import Form from "@/components/form/Form";
-import { login } from "@/lib/auth";
+import { signIn } from "@/lib/actions/auth-actions";
+import { getCurrentUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default function LoginPage() {
-  const headerTitle = "Login";
+  const user = getCurrentUser();
+  if (user) {
+    redirect("/dashboard");
+  }
+
+  const headerTitle = "Welcome Back";
+
+  const headerMessage =
+    "Sign in to your SupportDesk account to manage your support requests.";
+
+  const submitMessage = "Sign In";
+
   const formElements = [
-  {
-    title: "Email",
-    type: "email",
-    id: "email",
-    name: "email",
-  },
-  {
-    title: "Password",
-    type: "password",
-    id: "password",
-    name: "password",
-  },
-];
-  const submitMessage = "Login!";
+    {
+      id: "email",
+      title: "Email Address",
+      name: "email",
+      type: "email",
+      placeholder: "Enter your email address",
+      autoComplete: "email",
+    },
+    {
+      id: "password",
+      title: "Password",
+      name: "password",
+      type: "password",
+      placeholder: "Enter your password",
+      autoComplete: "current-password",
+    },
+  ];
 
   return (
-    <Form headerTitle={headerTitle} formElements={formElements} submitMessage={submitMessage} signUp={login}/>
+    <Form
+      headerTitle={headerTitle}
+      headerMessage={headerMessage}
+      formElements={formElements}
+      submitMessage={submitMessage}
+      action={signIn}
+      footerText="Don't have an account?"
+      footerHref="/sign-up"
+      footerLabel="Create an account"
+    />
   );
 }

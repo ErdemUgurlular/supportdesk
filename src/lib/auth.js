@@ -3,6 +3,7 @@ import "server-only";
 
 import { cache } from "react";
 
+// Dummy users for development
 const dummyUsers = {
   user: {
     id: "user-123",
@@ -27,14 +28,16 @@ const dummyUsers = {
 };
 
 export const getCurrentUser = cache(async () => {
-  // Never use dummy authentication in production
-  if (process.env.NODE_ENV === "production") {
+  // Only enable dummy authentication during development
+  if (process.env.NODE_ENV !== "development") {
     return null;
   }
 
-  const role = process.env.DUMMY_USER_ROLE || "user";
+  const role = (
+    process.env.DUMMY_USER_ROLE ?? "guest"
+  ).trim().toLowerCase();
 
-  // Guests are unauthenticated
+  // Guest users are not authenticated
   if (role === "guest") {
     return null;
   }
@@ -43,7 +46,7 @@ export const getCurrentUser = cache(async () => {
 
   if (!user) {
     throw new Error(
-      `Invalid DUMMY_USER_ROLE: ${role}. Use user, agent, admin, or guest.`
+      `Invalid DUMMY_USER_ROLE: ${role}`
     );
   }
 

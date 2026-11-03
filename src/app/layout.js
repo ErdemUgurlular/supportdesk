@@ -1,8 +1,10 @@
+
 import "./globals.css";
 
-import AppProviders from "@/providers/AppProviders";
 import { getCurrentUser } from "@/lib/auth";
+
 import MainLayout from "@/components/layout/MainLayout";
+import AppProviders from "@/providers/AppProviders";
 
 export const metadata = {
   title: "SupportDesk",
@@ -16,7 +18,9 @@ export default async function RootLayout({ children }) {
     <html lang="en">
       <body>
         <AppProviders initialUser={initialUser}>
-          <MainLayout>{children}</MainLayout>
+          <MainLayout>
+            {children}
+          </MainLayout>
         </AppProviders>
       </body>
     </html>

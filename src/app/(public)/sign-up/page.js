@@ -1,27 +1,58 @@
 import Form from "@/components/form/Form";
-import { signUp } from "@/lib/auth";
+import { signUp } from "@/lib/actions/auth-actions";
+import { getCurrentUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default function SignUpPage() {
-  const headerTitle = "Sign Up";
+  const user = getCurrentUser();
+  if(user) {
+    redirect('/dashboard');
+  }
+
+  const headerTitle = "Create an Account";
+
   const headerMessage =
-    "Create your account and wait for an admin to confirm it";
+    "Join SupportDesk and manage your support requests easily.";
+
+  const submitMessage = "Create Account";
+
   const formElements = [
-  {
-    title: "Email",
-    type: "email",
-    id: "email",
-    name: "email",
-  },
-  {
-    title: "Password",
-    type: "password",
-    id: "password",
-    name: "password",
-  },
-];
-  const submitMessage = "Sign up!";
+    {
+      id: "name",
+      title: "Full Name",
+      name: "name",
+      type: "text",
+      placeholder: "Enter your full name",
+      autoComplete: "name",
+    },
+    {
+      id: "email",
+      title: "Email Address",
+      name: "email",
+      type: "email",
+      placeholder: "Enter your email address",
+      autoComplete: "email",
+    },
+    {
+      id: "password",
+      title: "Password",
+      name: "password",
+      type: "password",
+      placeholder: "Enter your password",
+      autoComplete: "new-password",
+    },
+  ];
 
   return (
-    <Form headerTitle={headerTitle} headerMessage={headerMessage} formElements={formElements} submitMessage={submitMessage} signUp={signUp}/>
+    <Form
+      headerTitle={headerTitle}
+      headerMessage={headerMessage}
+      formElements={formElements}
+      submitMessage={submitMessage}
+      action={signUp}
+      footerText="Already have an account?"
+      footerHref="/login"
+      footerLabel="Sign in"
+    />
   );
 }

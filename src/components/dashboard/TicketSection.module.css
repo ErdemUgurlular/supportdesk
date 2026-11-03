@@ -208,3 +208,48 @@
     gap: 0.4rem;
   }
 }
+
+
+.ticketControls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.searchInput,
+.statusSelect {
+  padding: 0.7rem 0.85rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 0;
+}
+
+.statusSelect {
+  cursor: pointer;
+}
+
+.searchInput:focus,
+.statusSelect:focus {
+  outline: 2px solid #93c5fd;
+  border-color: #2563eb;
+}
+
+@media (max-width: 640px) {
+  .ticketControls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchInput,
+  .statusSelect {
+    width: 100%;
+  }
+}
