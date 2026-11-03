@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useTicket } from "@/hooks/useTicket";
 
-import styles from "./TicketSections.module.css";
+import styles from "./TicketSection.module.css";
 
 function formatDate(date) {
   if (!date) return "Date unavailable";

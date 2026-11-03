@@ -8,7 +8,7 @@ export default function DashboardHeader() {
   return (
     <>
       <h1>Dashboard</h1>
-      <p>Welcome back, {user?.name ?? "User"}!</p>
+      <p>Welcome back, {name ? name : "User"}!</p>
     </>
   );
 }

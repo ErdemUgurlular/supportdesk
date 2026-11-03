@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 
 import "./globals.css";
-import MainLayout from "../components/layout/MainLayout";
+import MainLayout from "../../components/layout/MainLayout";
 import AppProviders from "@/providers/AppProviders";
 
 export const metadata = {
