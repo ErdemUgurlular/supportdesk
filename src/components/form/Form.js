@@ -15,7 +15,7 @@ export default function Form({
     <>
       <header>
         <h1>{headerTitle}</h1>
-        <p>{headerMessage}</p>
+        {headerMessage && <p>{headerMessage}</p>}
       </header>
       <main>
         <form action={formAction}>
