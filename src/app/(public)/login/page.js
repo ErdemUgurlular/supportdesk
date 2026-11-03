@@ -1,5 +1,5 @@
 import Form from "@/components/form/Form";
-import { login } from "@/lib/authentication";
+import { login } from "@/lib/auth";
 
 export default function LoginPage() {
   const headerTitle = "Login";

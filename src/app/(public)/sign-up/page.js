@@ -1,5 +1,5 @@
 import Form from "@/components/form/Form";
-import { signUp } from "@/lib/authentication";
+import { signUp } from "@/lib/auth";
 
 export default function SignUpPage() {
   const headerTitle = "Sign Up";
