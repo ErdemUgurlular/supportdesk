@@ -1,7 +1,7 @@
 import Link from "next/link";
 import NavLink from "./NavLink";
 
-import { navigationItems } from "@/lib/navigation";
+import { navigationItems } from "@/lib/navigation-items";
 
 export default function MainNavigation({ role = "guest" }) {
   const links = navigationItems[role] ?? navigationItems.guest;
