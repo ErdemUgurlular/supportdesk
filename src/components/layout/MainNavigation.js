@@ -11,7 +11,6 @@ import styles from "./MainNavigation.module.css";
 export default function MainNavigation() {
   const { role } = useAuth();
 
-  console.log("Navigation role:", role);
   // Get navigation links based on the current user role
   const links = navigationItems[role] ?? navigationItems.guest;
 

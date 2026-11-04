@@ -1,18 +1,43 @@
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 
+import TicketList from "@/components/tickets/TicketList";
 import { getCurrentUser } from "@/lib/auth";
-import MyTickets from "@/components/dashboard/MyTickets";
+import { getTickets } from "@/lib/tickets";
 
-export default async function AssignedTicketsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AssignedTicketsPage({ searchParams }) {
   const user = await getCurrentUser();
-  let mode = ""
 
-  // Only agents can access this page
-  if (!user || user.role !== "agent") {
-    notFound();
-  } else {
-    mode = "assigned"
+  if (!user) {
+    redirect("/login");
   }
 
-  return <MyTickets mode={mode} />;
+  if (user.role !== "agent") {
+    redirect("/unauthorized");
+  }
+
+  const params = await searchParams;
+
+  const result = await getTickets({
+    userId: user.id,
+    role: user.role,
+    mode: "assigned",
+    page: params.page,
+    search: params.search,
+    status: params.status,
+    priority: params.priority,
+    sort: params.sort,
+  });
+
+  return (
+    <TicketList
+      tickets={result.tickets}
+      currentPage={result.currentPage}
+      totalPages={result.totalPages}
+      totalTickets={result.totalTickets}
+      heading="Assigned Tickets"
+      description="View and manage the support tickets assigned to you."
+    />
+  );
 }

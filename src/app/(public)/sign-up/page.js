@@ -3,8 +3,8 @@ import { signUp } from "@/lib/actions/auth-actions";
 import { getCurrentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
-export default function SignUpPage() {
-  const user = getCurrentUser();
+export default async function SignUpPage() {
+  const user = await getCurrentUser();
   if(user) {
     redirect('/dashboard');
   }

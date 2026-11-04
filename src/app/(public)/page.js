@@ -14,9 +14,9 @@ export default async function HomePage() {
   if (user) {
     if (allowedRoles.includes(user.role)) {
       redirect("/dashboard");
+    } else {
+      redirect("/login");
     }
-
-    redirect("/login");
   }
 
   // Guest landing page

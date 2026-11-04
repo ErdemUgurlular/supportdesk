@@ -1,15 +1,13 @@
-import { getCurrentUser } from "@/lib/auth";
 import MainNavigation from "./MainNavigation";
 
-export default function MainLayout({ children }) {
+import styles from "./MainLayout.module.css"
 
+export default function MainLayout({ children }) {
   return (
     <>
       <MainNavigation />
 
-      <main>
-        {children}
-      </main>
+      <div className={styles.mainContent}>{children}</div>
     </>
   );
 }

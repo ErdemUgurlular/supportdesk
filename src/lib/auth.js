@@ -1,9 +1,7 @@
-
 import "server-only";
 
 import { cache } from "react";
 
-// Dummy users for development
 const dummyUsers = {
   user: {
     id: "user-123",
@@ -28,16 +26,12 @@ const dummyUsers = {
 };
 
 export const getCurrentUser = cache(async () => {
-  // Only enable dummy authentication during development
-  if (process.env.NODE_ENV !== "development") {
-    return null;
-  }
-
   const role = (
     process.env.DUMMY_USER_ROLE ?? "guest"
   ).trim().toLowerCase();
 
-  // Guest users are not authenticated
+  console.log("Dummy authentication role:", role);
+
   if (role === "guest") {
     return null;
   }
@@ -45,9 +39,7 @@ export const getCurrentUser = cache(async () => {
   const user = dummyUsers[role];
 
   if (!user) {
-    throw new Error(
-      `Invalid DUMMY_USER_ROLE: ${role}`
-    );
+    throw new Error(`Invalid dummy role: ${role}`);
   }
 
   return user;

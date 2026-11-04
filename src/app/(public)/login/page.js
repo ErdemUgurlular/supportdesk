@@ -3,8 +3,8 @@ import { signIn } from "@/lib/actions/auth-actions";
 import { getCurrentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
-export default function LoginPage() {
-  const user = getCurrentUser();
+export default async function LoginPage() {
+  const user = await getCurrentUser();
   if (user) {
     redirect("/dashboard");
   }
