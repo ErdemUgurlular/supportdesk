@@ -16,11 +16,7 @@ JavaScript
 
 PostgreSQL
 
-Prisma
-
 Authentication
-
-Git & GitHub
 
 Features
 
