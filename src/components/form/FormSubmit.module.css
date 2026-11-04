@@ -1,0 +1,36 @@
+.submitButton {
+  width: 100%;
+  min-height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0.75rem 1rem;
+
+  background: var(--primary);
+  color: #ffffff;
+
+  border: none;
+  border-radius: var(--radius-md);
+
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.submitButton:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.submitButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
