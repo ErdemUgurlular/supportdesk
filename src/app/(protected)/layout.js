@@ -1,12 +1,27 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
+
+import MainNavigation from "@/components/layout/MainNavigation";
 import { getCurrentUser } from "@/lib/auth";
 
-export default async function ProtectedLayout({ children }) {
+async function ProtectedDashboard({ children }) {
   const user = await getCurrentUser();
 
   if (!user) {
-    redirect("/");
+    redirect("/login");
   }
 
   return children;
+}
+
+export default function DashboardLayout({ children }) {
+  return (
+    <>
+      <MainNavigation />
+
+      <Suspense fallback={<main>Loading your dashboard...</main>}>
+        <ProtectedDashboard>{children}</ProtectedDashboard>
+      </Suspense>
+    </>
+  );
 }

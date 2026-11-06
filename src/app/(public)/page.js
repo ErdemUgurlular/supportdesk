@@ -1,25 +1,52 @@
-import Link from "next/link";
-import { redirect } from "next/navigation";
+"use client";
 
-import { getCurrentUser } from "@/lib/auth";
+import { useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+import { useAuth } from "@/hooks/useAuth";
 
 import styles from "./page.module.css";
 
-export default async function HomePage() {
-  const user = await getCurrentUser();
+export default function HomePage() {
+  const router = useRouter();
 
-  const allowedRoles = ["user", "agent", "admin"];
+  const { user, isAuthenticated, isLoading, authError, refreshUser } =
+    useAuth();
 
-  // Redirect authenticated users to their dashboard
-  if (user) {
-    if (allowedRoles.includes(user.role)) {
-      redirect("/dashboard");
-    } else {
-      redirect("/login");
+  useEffect(() => {
+    if (isLoading || !isAuthenticated) {
+      return;
     }
+
+    const allowedRoles = ["user", "agent", "admin"];
+
+    if (allowedRoles.includes(user.role)) {
+      router.replace("/dashboard");
+    } else {
+      router.replace("/login");
+    }
+  }, [user, isAuthenticated, isLoading, router]);
+
+  // Wait until authentication has been checked.
+  if (isLoading || isAuthenticated) {
+    return (
+      <main className={styles.landingPage}>
+        <p>Loading SupportDesk...</p>
+      </main>
+    );
   }
 
-  // Guest landing page
+  // Don't mistake a failed session check for a guest session.
+  if (authError) {
+    return (
+      <main className={styles.landingPage}>
+        <h1>Unable to verify your session.</h1>
+        <button onClick={() => refreshUser()}>Try Again</button>
+      </main>
+    );
+  }
+
   return (
     <main className={styles.landingPage}>
       <section className={styles.hero}>

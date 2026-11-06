@@ -3,16 +3,18 @@
 import Link from "next/link";
 import NavLink from "./NavLink";
 
+import LogoutButton from "@/components/auth/LogoutButton";
 import { navigationItems } from "@/lib/navigation-items";
 import { useAuth } from "@/hooks/useAuth";
 
 import styles from "./MainNavigation.module.css";
 
 export default function MainNavigation() {
-  const { role } = useAuth();
+  const { role, isAuthenticated, isLoading } = useAuth();
 
-  // Get navigation links based on the current user role
-  const links = navigationItems[role] ?? navigationItems.guest;
+  const links = isLoading
+    ? []
+    : (navigationItems[role] ?? navigationItems.guest);
 
   return (
     <header className={styles.header}>
@@ -29,6 +31,12 @@ export default function MainNavigation() {
                 <NavLink href={link.href}>{link.label}</NavLink>
               </li>
             ))}
+
+            {!isLoading && isAuthenticated && (
+              <li>
+                <LogoutButton className={styles.logoutButton}/>
+              </li>
+            )}
           </ul>
         </nav>
       </div>
