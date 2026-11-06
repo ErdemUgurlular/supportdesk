@@ -4,8 +4,6 @@ import TicketList from "@/components/tickets/TicketList";
 import { getCurrentUser } from "@/lib/auth";
 import { getTickets } from "@/lib/tickets";
 
-export const dynamic = "force-dynamic";
-
 export default async function TicketsPage({ searchParams }) {
   const user = await getCurrentUser();
 

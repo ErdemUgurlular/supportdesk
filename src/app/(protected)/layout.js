@@ -1,27 +1,13 @@
 import { Suspense } from "react";
-import { redirect } from "next/navigation";
+import ProtectedGate from "@/components/auth/ProtectedGate";
 
-import MainNavigation from "@/components/layout/MainNavigation";
-import { getCurrentUser } from "@/lib/auth";
+// Protected routes require request-time rendering.
+export const instant = false;
 
-async function ProtectedDashboard({ children }) {
-  const user = await getCurrentUser();
-
-  if (!user) {
-    redirect("/login");
-  }
-
-  return children;
-}
-
-export default function DashboardLayout({ children }) {
+export default function ProtectedLayout({ children }) {
   return (
-    <>
-      <MainNavigation />
-
-      <Suspense fallback={<main>Loading your dashboard...</main>}>
-        <ProtectedDashboard>{children}</ProtectedDashboard>
-      </Suspense>
-    </>
+    <Suspense fallback={<p>Loading SupportDesk...</p>}>
+      <ProtectedGate>{children}</ProtectedGate>
+    </Suspense>
   );
 }

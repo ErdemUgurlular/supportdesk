@@ -1,7 +1,5 @@
 import "server-only";
 
-import prisma from "@/lib/prisma";
-
 const PAGE_SIZE = 10;
 
 const SORT_OPTIONS = {
