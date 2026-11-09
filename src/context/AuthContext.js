@@ -1,21 +1,14 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useCallback, useMemo, useState } from "react";
 
 export const AuthContext = createContext(null);
 
 export function AuthProvider({ children, initialUser = null }) {
   const [user, setUser] = useState(initialUser);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState(null);
 
-  // Retrieve the current session from the server.
   const refreshUser = useCallback(async ({ signal } = {}) => {
     setIsLoading(true);
     setAuthError(null);
@@ -39,9 +32,7 @@ export function AuthProvider({ children, initialUser = null }) {
 
       return currentUser;
     } catch (error) {
-      if (error.name === "AbortError") {
-        return null;
-      }
+      if (error.name === "AbortError") return null;
 
       console.error("Authentication error:", error);
 
@@ -56,26 +47,15 @@ export function AuthProvider({ children, initialUser = null }) {
     }
   }, []);
 
-  // Check the existing session when the application loads.
-  useEffect(() => {
-    const controller = new AbortController();
-
-    refreshUser({ signal: controller.signal });
-
-    return () => controller.abort();
-  }, [refreshUser]);
-
   const role = user?.role ?? "guest";
   const isAuthenticated = Boolean(user);
 
-  // Update context after successful login.
   const setAuthenticatedUser = useCallback((userData) => {
     setUser(userData);
     setAuthError(null);
     setIsLoading(false);
   }, []);
 
-  // Clear context after successful logout.
   const clearAuthenticatedUser = useCallback(() => {
     setUser(null);
     setAuthError(null);

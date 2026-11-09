@@ -1,34 +1,93 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
+
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+import { useTicket } from "@/hooks/useTicket";
+
 import TicketCard from "./TicketCard";
-import TicketPagination from "./TicketPagination";
+
 import styles from "./TicketList.module.css";
 
-export default function TicketList({
-  tickets,
-  currentPage,
-  totalPages,
-  totalTickets,
-  heading,
-  description,
-}) {
+const PRIORITY_RANK = {
+  low: 1,
+  medium: 2,
+  high: 3,
+  urgent: 4,
+};
+
+export default function TicketList({ heading, description }) {
+  // =========================================
+  // 1. TICKET CONTEXT
+  // =========================================
+
+  const { tickets, isLoading, error, filterTicketList } = useTicket();
+
+  // =========================================
+  // 2. URL STATE
+  // =========================================
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [isPending, startTransition] = useTransition();
+  const queryString = searchParams.toString();
 
-  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const urlSearch = searchParams.get("search") || "";
 
   const status = searchParams.get("status") || "All";
   const priority = searchParams.get("priority") || "All";
   const sort = searchParams.get("sort") || "newest";
 
+  const [search, setSearch] = useState(urlSearch);
+
+  const [isPending, startTransition] = useTransition();
+
+  // Synchronize search input with browser navigation.
+  useEffect(() => {
+    setSearch(urlSearch);
+  }, [urlSearch]);
+
+  // =========================================
+  // 3. CLIENT-SIDE FILTERING AND SORTING
+  // =========================================
+
+  const filteredTickets = useMemo(() => {
+    const filtered = filterTicketList(tickets, {
+      status,
+      priority,
+      search,
+    });
+
+    return [...filtered].sort((a, b) => {
+      if (sort === "oldest") {
+        return new Date(a.createdAt ?? 0) - new Date(b.createdAt ?? 0);
+      }
+
+      if (sort === "priorityHigh") {
+        return (
+          (PRIORITY_RANK[b.priority] ?? 0) - (PRIORITY_RANK[a.priority] ?? 0)
+        );
+      }
+
+      if (sort === "priorityLow") {
+        return (
+          (PRIORITY_RANK[a.priority] ?? 0) - (PRIORITY_RANK[b.priority] ?? 0)
+        );
+      }
+
+      // Default: newest first.
+      return new Date(b.createdAt ?? 0) - new Date(a.createdAt ?? 0);
+    });
+  }, [tickets, filterTicketList, status, priority, search, sort]);
+
+  // =========================================
+  // 4. UPDATE URL FILTERS
+  // =========================================
+
   function updateFilters(key, value) {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(queryString);
 
     if (value === "All" || value === "newest" || !value) {
       params.delete(key);
@@ -36,17 +95,25 @@ export default function TicketList({
       params.set(key, value);
     }
 
+    // We'll use pagination later.
     params.delete("page");
 
+    const query = params.toString();
+
     startTransition(() => {
-      router.push(`${pathname}?${params.toString()}`);
+      router.push(query ? `${pathname}?${query}` : pathname);
     });
   }
 
-  // Debounce search to avoid sending a request on every keystroke.
+  // =========================================
+  // 5. SEARCH DEBOUNCE
+  // =========================================
+
   useEffect(() => {
+    if (search.trim() === urlSearch) return;
+
     const timeout = setTimeout(() => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(queryString);
 
       if (search.trim()) {
         params.set("search", search.trim());
@@ -56,18 +123,26 @@ export default function TicketList({
 
       params.delete("page");
 
-      if (params.toString() !== searchParams.toString()) {
-        startTransition(() => {
-          router.replace(`${pathname}?${params.toString()}`);
-        });
-      }
+      const query = params.toString();
+
+      startTransition(() => {
+        router.replace(query ? `${pathname}?${query}` : pathname);
+      });
     }, 400);
 
     return () => clearTimeout(timeout);
-  }, [search, pathname, router, searchParams]);
+  }, [search, urlSearch, queryString, pathname, router]);
+
+  // =========================================
+  // 6. ACTIVE FILTERS
+  // =========================================
 
   const activeFilters =
-    searchParams.has("search") || status !== "All" || priority !== "All";
+    Boolean(search.trim()) || status !== "All" || priority !== "All";
+
+  // =========================================
+  // 7. RENDER
+  // =========================================
 
   return (
     <section className={styles.container}>
@@ -77,8 +152,10 @@ export default function TicketList({
           <p>{description}</p>
         </div>
 
-        <span className={styles.ticketCount}>{totalTickets} tickets</span>
+        <span className={styles.ticketCount}>{tickets.length} tickets</span>
       </header>
+
+      {/* FILTERS */}
 
       <div className={styles.filters}>
         <input
@@ -95,10 +172,10 @@ export default function TicketList({
           className={styles.select}
         >
           <option value="All">All statuses</option>
-          <option value="Open">Open</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Resolved">Resolved</option>
-          <option value="Closed">Closed</option>
+          <option value="open">Open</option>
+          <option value="in_progress">In Progress</option>
+          <option value="resolved">Resolved</option>
+          <option value="closed">Closed</option>
         </select>
 
         <select
@@ -107,10 +184,10 @@ export default function TicketList({
           className={styles.select}
         >
           <option value="All">All priorities</option>
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
-          <option value="Critical">Critical</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+          <option value="urgent">Urgent</option>
         </select>
 
         <select
@@ -125,23 +202,28 @@ export default function TicketList({
         </select>
       </div>
 
+      {/* RESULTS */}
+
       <div className={styles.resultsInfo}>
         <span>
-          Showing {tickets.length} of {totalTickets} tickets
+          Showing {filteredTickets.length} of {tickets.length} tickets
         </span>
 
-        {isPending && <span>Updating...</span>}
+        {(isPending || isLoading) && <span>Updating...</span>}
       </div>
 
-      {tickets.length > 0 ? (
+      {error ? (
+        <p className={styles.error}>Unable to load tickets.</p>
+      ) : filteredTickets.length > 0 ? (
         <div className={styles.ticketGrid}>
-          {tickets.map((ticket) => (
+          {filteredTickets.map((ticket) => (
             <TicketCard key={ticket.id} ticket={ticket} />
           ))}
         </div>
       ) : (
         <div className={styles.emptyState}>
           <h3>No tickets found</h3>
+
           <p>
             {activeFilters
               ? "Try changing your search or filters."
@@ -149,12 +231,6 @@ export default function TicketList({
           </p>
         </div>
       )}
-
-      <TicketPagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        searchParams={Object.fromEntries(searchParams.entries())}
-      />
     </section>
   );
 }

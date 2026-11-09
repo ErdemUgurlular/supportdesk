@@ -12,27 +12,31 @@ export function useTicket() {
   }
 
   const { state, dispatch } = context;
-  const { tickets, isLoading, error } = state;
 
-  // Normalize status values
+  const { tickets, isLoading, error, scopeKey } = state;
+
+  // Normalize PostgreSQL status values.
   const normalizeStatus = (status) =>
     String(status ?? "")
       .toLowerCase()
       .trim()
-      .replace(/\s+/g, "-");
+      .replace(/[_\s]+/g, "-");
 
-  // Replace all tickets
+  // Replace currently loaded tickets.
   const setTickets = useCallback(
-    (tickets) => {
+    (tickets, scopeKey = null) => {
       dispatch({
         type: "SET_TICKETS",
-        payload: tickets,
+        payload: {
+          tickets,
+          scopeKey,
+        },
       });
     },
     [dispatch],
   );
 
-  // Add a new ticket
+  // Add a new ticket.
   const addTicket = useCallback(
     (ticket) => {
       dispatch({
@@ -43,7 +47,7 @@ export function useTicket() {
     [dispatch],
   );
 
-  // Update an existing ticket
+  // Update a ticket.
   const updateTicket = useCallback(
     (ticketId, updates) => {
       dispatch({
@@ -54,7 +58,7 @@ export function useTicket() {
     [dispatch],
   );
 
-  // Remove a ticket
+  // Remove a ticket.
   const removeTicket = useCallback(
     (ticketId) => {
       dispatch({
@@ -65,7 +69,7 @@ export function useTicket() {
     [dispatch],
   );
 
-  // Set loading state
+  // Loading state.
   const setLoading = useCallback(
     (value) => {
       dispatch({
@@ -76,7 +80,7 @@ export function useTicket() {
     [dispatch],
   );
 
-  // Set error state
+  // Error state.
   const setError = useCallback(
     (error) => {
       dispatch({
@@ -87,7 +91,12 @@ export function useTicket() {
     [dispatch],
   );
 
-  // Get tickets belonging to a specific user
+  // Clear the current ticket collection.
+  const clearTickets = useCallback(() => {
+    dispatch({ type: "CLEAR_TICKETS" });
+  }, [dispatch]);
+
+  // Get tickets created by a user.
   const getUserTickets = useCallback(
     (userId) => {
       if (!userId) return [];
@@ -99,27 +108,24 @@ export function useTicket() {
     [tickets],
   );
 
-  // Get all unresolved tickets belonging to a user
+  // Get unresolved tickets belonging to a user.
   const getActiveTickets = useCallback(
     (userId) => {
-      return getUserTickets(userId).filter((ticket) => {
-        const status = String(ticket.status ?? "")
-          .toLowerCase()
-          .trim()
-          .replace(/\s+/g, "-");
-
-        return ["open", "in-progress", "pending"].includes(status);
-      });
+      return getUserTickets(userId).filter((ticket) =>
+        ["open", "in-progress"].includes(normalizeStatus(ticket.status)),
+      );
     },
     [getUserTickets],
   );
 
-  // Filter user tickets by status
+  // Filter tickets by status.
   const getTicketsByStatus = useCallback(
     (userId, status) => {
       const userTickets = getUserTickets(userId);
 
-      if (status === "all") return userTickets;
+      if (normalizeStatus(status) === "all") {
+        return userTickets;
+      }
 
       return userTickets.filter(
         (ticket) => normalizeStatus(ticket.status) === normalizeStatus(status),
@@ -128,7 +134,7 @@ export function useTicket() {
     [getUserTickets],
   );
 
-  // Calculate user ticket statistics
+  // Calculate statistics for a user's loaded tickets.
   const getTicketStatistics = useCallback(
     (userId) => {
       const userTickets = getUserTickets(userId);
@@ -137,28 +143,36 @@ export function useTicket() {
         (ticket) => normalizeStatus(ticket.status) === "resolved",
       );
 
-      const pending = userTickets.filter((ticket) =>
-        ["open", "in-progress", "pending"].includes(
-          normalizeStatus(ticket.status),
-        ),
+      const active = userTickets.filter((ticket) =>
+        ["open", "in-progress"].includes(normalizeStatus(ticket.status)),
       );
 
       return {
         total: userTickets.length,
         resolved: resolved.length,
-        pending: pending.length,
+        pending: active.length,
+        active: active.length,
+        closed: userTickets.filter(
+          (ticket) => normalizeStatus(ticket.status) === "closed",
+        ).length,
       };
     },
     [getUserTickets],
   );
 
-  // Get tickets assigned to a specific agent
+  // Resolve assigned agent ID from PostgreSQL ticket shape.
+  const getAssignedAgentId = (ticket) =>
+    ticket.assignedToId ?? ticket.assignedTo?.id ?? ticket.assignedTo;
+
+  // Get tickets assigned to an agent.
   const getAssignedTickets = useCallback(
     (agentId) => {
       if (!agentId) return [];
 
       return tickets
-        .filter((ticket) => String(ticket.assignedTo) === String(agentId))
+        .filter(
+          (ticket) => String(getAssignedAgentId(ticket)) === String(agentId),
+        )
         .sort(
           (a, b) =>
             new Date(b.updatedAt ?? b.createdAt ?? 0) -
@@ -168,7 +182,7 @@ export function useTicket() {
     [tickets],
   );
 
-  // Calculate agent statistics
+  // Calculate agent statistics.
   const getAgentTicketStatistics = useCallback(
     (agentId) => {
       const assignedTickets = getAssignedTickets(agentId);
@@ -182,16 +196,15 @@ export function useTicket() {
         total: assignedTickets.length,
         open: getCount("open"),
         inProgress: getCount("in-progress"),
-        pending: getCount("pending"),
         resolved: getCount("resolved"),
-        active:
-          getCount("open") + getCount("in-progress") + getCount("pending"),
+        closed: getCount("closed"),
+        active: getCount("open") + getCount("in-progress"),
       };
     },
     [getAssignedTickets],
   );
 
-  // Calculate system-wide ticket statistics
+  // Calculate statistics for the currently loaded collection.
   const getAllTicketStatistics = useCallback(() => {
     const getCount = (status) =>
       tickets.filter((ticket) => normalizeStatus(ticket.status) === status)
@@ -201,12 +214,13 @@ export function useTicket() {
       total: tickets.length,
       open: getCount("open"),
       inProgress: getCount("in-progress"),
-      pending: getCount("pending"),
       resolved: getCount("resolved"),
+      closed: getCount("closed"),
+      active: getCount("open") + getCount("in-progress"),
     };
   }, [tickets]);
 
-  // Get most recently created or updated tickets
+  // Get recent tickets.
   const getRecentTickets = useCallback(
     (limit = 5) => {
       return [...tickets]
@@ -216,43 +230,48 @@ export function useTicket() {
     [tickets],
   );
 
-  // Filter any ticket collection by status and search query
-const filterTicketList = useCallback(
-  (sourceTickets = [], { status = "all", search = "" } = {}) => {
-    const normalizedSearch = search.trim().toLowerCase();
+  // Filter an arbitrary ticket collection.
+  const filterTicketList = useCallback(
+    (
+      sourceTickets = [],
+      { status = "all", search = "", priority = "all" } = {},
+    ) => {
+      const normalizedSearch = search.trim().toLowerCase();
 
-    return sourceTickets.filter((ticket) => {
-      const ticketStatus = normalizeStatus(ticket.status);
+      return sourceTickets.filter((ticket) => {
+        const matchesStatus =
+          normalizeStatus(status) === "all" ||
+          normalizeStatus(ticket.status) === normalizeStatus(status);
 
-      const matchesStatus =
-        status === "all" ||
-        ticketStatus === normalizeStatus(status);
+        const matchesPriority =
+          normalizeStatus(priority) === "all" ||
+          normalizeStatus(ticket.priority) === normalizeStatus(priority);
 
-      const searchableText = [
-        ticket.title,
-        ticket.description,
-        ticket.ticketNumber,
-        ticket.priority,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
+        const searchableText = [
+          ticket.title,
+          ticket.description,
+          ticket.id,
+          ticket.priority,
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
 
-      const matchesSearch =
-        !normalizedSearch ||
-        searchableText.includes(normalizedSearch);
+        const matchesSearch =
+          !normalizedSearch || searchableText.includes(normalizedSearch);
 
-      return matchesStatus && matchesSearch;
-    });
-  },
-  []
-);
+        return matchesStatus && matchesPriority && matchesSearch;
+      });
+    },
+    [],
+  );
 
   return useMemo(
     () => ({
       tickets,
       isLoading,
       error,
+      scopeKey,
 
       setTickets,
       addTicket,
@@ -260,12 +279,16 @@ const filterTicketList = useCallback(
       removeTicket,
       setLoading,
       setError,
+      clearTickets,
+
       getUserTickets,
       getActiveTickets,
       getTicketsByStatus,
       getTicketStatistics,
+
       getAssignedTickets,
       getAgentTicketStatistics,
+
       getAllTicketStatistics,
       getRecentTickets,
       filterTicketList,
@@ -274,12 +297,14 @@ const filterTicketList = useCallback(
       tickets,
       isLoading,
       error,
+      scopeKey,
       setTickets,
       addTicket,
       updateTicket,
       removeTicket,
       setLoading,
       setError,
+      clearTickets,
       getUserTickets,
       getActiveTickets,
       getTicketsByStatus,

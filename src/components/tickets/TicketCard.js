@@ -10,7 +10,7 @@ function formatDate(date) {
 }
 
 export default function TicketCard({ ticket }) {
-  const statusClass = ticket.status?.toLowerCase().replace(/\s+/g, "");
+  const statusClass = ticket.status?.toLowerCase().replace(/[_\s]+/g, "");
 
   const priorityClass = ticket.priority?.toLowerCase();
 
@@ -48,7 +48,7 @@ export default function TicketCard({ ticket }) {
       <div className={styles.footer}>
         <div>
           <span className={styles.footerLabel}>
-            {ticket.assignedTo ? "Assigned to" : "Assignee"}
+            {ticket.assignedTo ? "Assigned to" : "Assigned"}
           </span>
 
           <span className={styles.footerValue}>
