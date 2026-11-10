@@ -1,15 +1,16 @@
-import { notFound } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth";
+"use client";
+
+import { useAuth } from "@/hooks/useAuth";
 
 import UserDashboard from "@/components/dashboard/user/UserDashboard";
 import AgentDashboard from "@/components/dashboard/agent/AgentDashboard";
 import AdminDashboard from "@/components/dashboard/admin/AdminDashboard";
 
-export default async function DashboardPage() {
-  const user = await getCurrentUser();
+export default function DashboardPage() {
+  const { user, isLoading } = useAuth();
 
-  if (!user) {
-    notFound();
+  if (isLoading || !user) {
+    return <p>Loading dashboard...</p>;
   }
 
   switch (user.role) {
@@ -23,6 +24,6 @@ export default async function DashboardPage() {
       return <AdminDashboard />;
 
     default:
-      notFound();
+      return <p>Invalid dashboard role.</p>;
   }
 }

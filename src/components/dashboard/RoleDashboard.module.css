@@ -1,42 +1,99 @@
+/* =========================================
+   DASHBOARD LAYOUT
+========================================= */
 
 .dashboard {
+  --text-primary: #172033;
+  --text-secondary: #718096;
+  --border-color: #e8edf3;
+  --surface: #ffffff;
+  --background: #f8fafc;
+  --primary: #2563eb;
+
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.75rem;
   width: 100%;
+  min-width: 0;
+  color: var(--text-primary);
 }
+
+/* =========================================
+   STATISTICS CARDS
+========================================= */
 
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 1rem;
 }
 
 .statCard {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 1.25rem;
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  padding: 1.35rem;
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.025);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.statCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #2563eb, #60a5fa);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.statCard:hover {
+  transform: translateY(-3px);
+  border-color: #d5e2f5;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.055);
+}
+
+.statCard:hover::before {
+  opacity: 1;
 }
 
 .statLabel {
-  color: #6b7280;
-  font-size: 0.85rem;
   margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 .statValue {
-  color: #111827;
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin: 0.75rem 0 0;
+  margin: 0.85rem 0 0;
+  color: var(--text-primary);
+  font-size: clamp(1.65rem, 2.5vw, 2rem);
+  font-weight: 750;
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
 }
 
+/* =========================================
+   GENERAL SECTIONS
+========================================= */
+
 .section {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
+  min-width: 0;
   padding: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.025);
 }
 
 .sectionHeading {
@@ -44,21 +101,28 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .sectionHeading h2,
 .quickLinks h2 {
-  color: #111827;
-  font-size: 1.2rem;
   margin: 0;
+  color: var(--text-primary);
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
 }
 
 .sectionHeading p {
-  color: #6b7280;
-  font-size: 0.875rem;
   margin: 0.4rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
 }
+
+/* =========================================
+   RECENT TICKETS
+========================================= */
 
 .ticketList {
   display: flex;
@@ -69,111 +133,191 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem 0;
-  border-bottom: 1px solid #e5e7eb;
+  gap: 1.5rem;
+  min-width: 0;
+  padding: 1.15rem 0;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.ticketRow:first-child {
+  padding-top: 0.5rem;
 }
 
 .ticketRow:last-child {
+  padding-bottom: 0;
   border-bottom: none;
 }
 
 .ticketMain {
+  flex: 1;
   min-width: 0;
 }
 
 .ticketTitle {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #1f2937;
+  overflow: hidden;
   margin: 0;
+  color: #263449;
+  font-size: 0.925rem;
+  font-weight: 650;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
 
 .ticketMeta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1rem;
-  margin-top: 0.5rem;
-  color: #6b7280;
-  font-size: 0.8rem;
+  align-items: center;
+  gap: 0.4rem 1.15rem;
+  margin-top: 0.55rem;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.ticketMeta span {
+  display: inline-flex;
+  align-items: center;
 }
 
 .ticketActions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: flex-end;
+  gap: 1.15rem;
+  flex-shrink: 0;
 }
 
+/* =========================================
+   STATUS BADGES
+========================================= */
+
 .status {
-  padding: 0.35rem 0.65rem;
-  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 27px;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 650;
+  line-height: 1;
   text-transform: capitalize;
   white-space: nowrap;
 }
 
 .status_open {
-  background: #fef3c7;
-  color: #92400e;
+  color: #a16207;
+  background: #fef9c3;
+  border-color: #fef08a;
 }
 
 .status_in-progress {
-  background: #dbeafe;
   color: #1d4ed8;
+  background: #eff6ff;
+  border-color: #bfdbfe;
 }
 
 .status_pending {
-  background: #fce7f3;
   color: #9d174d;
+  background: #fdf2f8;
+  border-color: #fbcfe8;
 }
 
 .status_resolved {
-  background: #dcfce7;
-  color: #166534;
+  color: #15803d;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.status_closed {
+  color: #475569;
+  background: #f1f5f9;
+  border-color: #cbd5e1;
 }
 
 .statusDefault {
-  background: #f3f4f6;
-  color: #374151;
+  color: #475569;
+  background: #f1f5f9;
+  border-color: #e2e8f0;
 }
 
+/* =========================================
+   DASHBOARD LINKS
+========================================= */
+
 .link {
-  color: #2563eb;
-  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--primary);
+  font-size: 0.85rem;
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
+  transition: color 0.2s ease;
 }
 
 .link:hover {
+  color: #1d4ed8;
   text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
+/* =========================================
+   EMPTY / LOADING / ERROR STATES
+========================================= */
+
 .emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 175px;
   padding: 2rem 1rem;
+  background: var(--background);
+  border: 1px dashed #d9e1eb;
+  border-radius: 9px;
   text-align: center;
-  background: #f9fafb;
-  border-radius: 8px;
 }
 
 .emptyState h3 {
-  color: #1f2937;
+  margin: 0;
+  color: #334155;
   font-size: 1rem;
-  margin: 0 0 0.5rem;
+  font-weight: 650;
 }
 
-.emptyState p,
-.message {
-  color: #6b7280;
+.emptyState p {
+  max-width: 380px;
+  margin: 0.55rem 0 0;
+  color: var(--text-secondary);
   font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.message {
   margin: 0;
+  padding: 1.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  text-align: center;
 }
 
 .error {
-  color: #dc2626;
+  margin: 0;
+  padding: 0.85rem 1rem;
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 7px;
   font-size: 0.875rem;
 }
+
+/* =========================================
+   ADMINISTRATION QUICK LINKS
+========================================= */
 
 .quickLinks {
   display: flex;
@@ -183,58 +327,180 @@
 
 .quickLinkGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
 }
 
 .quickLinkCard {
-  display: block;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  min-height: 125px;
+  padding: 1.35rem;
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
   text-decoration: none;
-  transition: border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .quickLinkCard:hover {
-  border-color: #2563eb;
+  transform: translateY(-3px);
+  border-color: #93b4f5;
+  box-shadow: 0 7px 18px rgba(37, 99, 235, 0.07);
 }
 
 .quickLinkCard h3 {
-  color: #1f2937;
-  font-size: 1rem;
-  margin: 0 0 0.5rem;
+  margin: 0;
+  color: #263449;
+  font-size: 0.975rem;
+  font-weight: 650;
 }
 
 .quickLinkCard p {
-  color: #6b7280;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  margin: 0;
+  margin: 0.55rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.83rem;
+  line-height: 1.6;
 }
 
-@media (max-width: 640px) {
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+.link:focus-visible,
+.quickLinkCard:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 3px;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 1100px) {
+  .statsGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    gap: 1.35rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  .statCard {
+    padding: 1.1rem;
+  }
+
+  .section {
+    padding: 1.2rem;
+  }
+
+  .quickLinkGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ticketRow {
+    gap: 1rem;
+  }
+
+  .ticketActions {
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 540px) {
+  .dashboard {
+    gap: 1.1rem;
+  }
+
+  .statsGrid {
+    gap: 0.7rem;
+  }
+
+  .statCard {
+    padding: 0.95rem;
+    border-radius: 9px;
+  }
+
+  .statLabel {
+    font-size: 0.78rem;
+  }
+
+  .statValue {
+    margin-top: 0.65rem;
+    font-size: 1.65rem;
+  }
+
   .section {
     padding: 1rem;
+    border-radius: 9px;
   }
 
   .sectionHeading {
     align-items: flex-start;
     flex-direction: column;
+    margin-bottom: 1rem;
+  }
+
+  .sectionHeading h2,
+  .quickLinks h2 {
+    font-size: 1.05rem;
   }
 
   .ticketRow {
     align-items: flex-start;
     flex-direction: column;
+    gap: 0.8rem;
+    padding: 1rem 0;
   }
 
   .ticketActions {
-    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
   }
 
   .ticketMeta {
     flex-direction: column;
-    gap: 0.35rem;
+    align-items: flex-start;
+    gap: 0.2rem;
+  }
+
+  .quickLinkGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .quickLinkCard {
+    min-height: 105px;
+    padding: 1.1rem;
+  }
+
+  .emptyState {
+    min-height: 145px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .statCard,
+  .statCard::before,
+  .quickLinkCard,
+  .link {
+    transition: none;
+  }
+
+  .statCard:hover,
+  .quickLinkCard:hover {
+    transform: none;
   }
 }

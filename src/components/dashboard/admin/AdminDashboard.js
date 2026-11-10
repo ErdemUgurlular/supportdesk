@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -26,12 +25,8 @@ function normalizeStatus(status) {
 }
 
 export default function AdminDashboard() {
-  const {
-    getAllTicketStatistics,
-    getRecentTickets,
-    isLoading,
-    error,
-  } = useTicket();
+  const { getAllTicketStatistics, getRecentTickets, isLoading, error } =
+    useTicket();
 
   const statistics = getAllTicketStatistics();
   const recentTickets = getRecentTickets(6);
@@ -40,8 +35,8 @@ export default function AdminDashboard() {
     { label: "Total Tickets", value: statistics.total },
     { label: "Open Tickets", value: statistics.open },
     { label: "In Progress", value: statistics.inProgress },
-    { label: "Pending Tickets", value: statistics.pending },
     { label: "Resolved Tickets", value: statistics.resolved },
+    { label: "Closed Tickets", value: statistics.closed },
   ];
 
   return (
@@ -96,16 +91,13 @@ export default function AdminDashboard() {
 
                     <div className={styles.ticketMeta}>
                       <span>
-                        {ticket.ticketNumber ?? String(ticketId ?? "").slice(-6)}
+                        {ticket.ticketNumber ??
+                          String(ticketId ?? "").slice(-6)}
                       </span>
 
-                      <span>
-                        Priority: {ticket.priority ?? "Normal"}
-                      </span>
+                      <span>Priority: {ticket.priority ?? "Normal"}</span>
 
-                      <span>
-                        Created: {formatDate(ticket.createdAt)}
-                      </span>
+                      <span>Created: {formatDate(ticket.createdAt)}</span>
                     </div>
                   </div>
 

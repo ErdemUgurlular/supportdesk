@@ -1,12 +1,13 @@
-import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth";
+import { Suspense } from "react";
+import ProtectedGate from "@/components/auth/ProtectedGate";
 
-export default async function ProtectedLayout({ children }) {
-  const user = await getCurrentUser();
+// Protected routes require request-time rendering.
+export const instant = false;
 
-  if (!user) {
-    redirect("/");
-  }
-
-  return children;
+export default function ProtectedLayout({ children }) {
+  return (
+    <Suspense fallback={<p>Loading SupportDesk...</p>}>
+      <ProtectedGate>{children}</ProtectedGate>
+    </Suspense>
+  );
 }

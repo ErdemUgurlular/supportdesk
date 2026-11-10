@@ -6,11 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:cleanup:sessions": "node scripts/cleanup-sessions.mjs"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "jose": "^6.2.15",
     "next": "16.4.3",
+    "pg": "^8.23.1",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },

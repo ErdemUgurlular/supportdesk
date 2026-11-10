@@ -1,95 +1,191 @@
+/* =========================================
+   NAVIGATION HEADER
+========================================= */
 
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   width: 100%;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-  position: relative;
-  z-index: 10;
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid #e8edf3;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .navigationContainer {
-  width: 100%;
-  max-width: 1400px;
-  min-height: 76px;
-  margin: 0 auto;
-  padding: 0 2rem;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
+  width: min(100% - 3rem, 1440px);
+  min-height: 72px;
+  margin: 0 auto;
 }
 
-/* Logo */
+/* =========================================
+   LOGO
+========================================= */
 
 .logo {
   display: inline-flex;
   align-items: center;
   gap: 0.65rem;
-
-  color: var(--text-primary);
-  font-size: 1.3rem;
-  font-weight: 700;
+  flex-shrink: 0;
+  color: #172033;
+  font-size: 1.2rem;
+  font-weight: 750;
+  letter-spacing: -0.04em;
   text-decoration: none;
-  white-space: nowrap;
 }
 
 .logoIcon {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  width: 36px;
-  height: 36px;
-
-  background: var(--primary);
+  width: 37px;
+  height: 37px;
   color: #ffffff;
-
-  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-radius: 10px;
   font-size: 1.1rem;
+  font-weight: 800;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.2);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-/* Navigation */
+.logo:hover .logoIcon {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.3);
+}
+
+.logo:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 5px;
+  border-radius: 4px;
+}
+
+/* =========================================
+   NAVIGATION LIST
+========================================= */
 
 .navigation {
   display: flex;
   align-items: center;
+  min-width: 0;
 }
 
 .navigationList {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-
-  list-style: none;
-  padding: 0;
+  justify-content: flex-end;
+  gap: 0.4rem;
   margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .navigationList li {
-  margin: 0;
+  display: flex;
+  align-items: center;
 }
 
-/* Responsive */
+/* =========================================
+   LOGOUT BUTTON
+========================================= */
 
-@media (max-width: 640px) {
+.logoutButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 39px;
+  padding: 0.55rem 0.9rem;
+  color: #dc2626;
+  background: #ffffff;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.logoutButton:hover {
+  color: #b91c1c;
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.logoutButton:focus-visible {
+  outline: 3px solid rgba(220, 38, 38, 0.2);
+  outline-offset: 3px;
+}
+
+.logoutButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 768px) {
   .navigationContainer {
-    min-height: auto;
-    padding: 1rem;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+    width: calc(100% - 2rem);
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    padding: 0.8rem 0;
   }
 
   .navigation {
     width: 100%;
     overflow-x: auto;
-    padding-bottom: 0.25rem;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
   }
 
   .navigationList {
+    justify-content: flex-start;
     width: max-content;
-    gap: 0.35rem;
+    min-width: 100%;
+    padding-bottom: 0.15rem;
+  }
+
+  .navigationList li {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .navigationContainer {
+    width: calc(100% - 1.5rem);
+  }
+
+  .logo {
+    font-size: 1.1rem;
+  }
+
+  .logoIcon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .navigationList {
+    gap: 0.3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logoIcon,
+  .logoutButton {
+    transition: none;
   }
 }

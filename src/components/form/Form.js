@@ -1,11 +1,19 @@
-
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+
+import { useAuth } from "@/hooks/useAuth";
 
 import FormSubmit from "./FormSubmit";
 import styles from "./Form.module.css";
+
+const initialState = {
+  message: null,
+  type: null,
+  user: null,
+};
 
 export default function Form({
   headerTitle,
@@ -17,10 +25,21 @@ export default function Form({
   footerHref,
   footerLabel,
 }) {
-  const [state, formAction] = useActionState(
-    action,
-    { message: null }
-  );
+  const router = useRouter();
+
+  const { setAuthenticatedUser } = useAuth();
+
+  const [state, formAction] = useActionState(action, initialState);
+
+  // Synchronize successful login with AuthContext.
+  useEffect(() => {
+    if (!state.user) {
+      return;
+    }
+
+    setAuthenticatedUser(state.user);
+    router.replace("/dashboard");
+  }, [state.user, setAuthenticatedUser, router]);
 
   return (
     <main className={styles.formPage}>
@@ -35,9 +54,7 @@ export default function Form({
           <div className={styles.formFields}>
             {formElements.map((element) => (
               <div key={element.id} className={styles.formGroup}>
-                <label htmlFor={element.id}>
-                  {element.title}
-                </label>
+                <label htmlFor={element.id}>{element.title}</label>
 
                 <input
                   type={element.type}
@@ -52,7 +69,10 @@ export default function Form({
           </div>
 
           {state.message && (
-            <p className={styles.formMessage} role="status">
+            <p
+              className={styles.formMessage}
+              role={state.type === "error" ? "alert" : "status"}
+            >
               {state.message}
             </p>
           )}
@@ -62,8 +82,7 @@ export default function Form({
 
         {footerText && footerHref && (
           <p className={styles.formFooter}>
-            {footerText}{" "}
-            <Link href={footerHref}>{footerLabel}</Link>
+            {footerText} <Link href={footerHref}>{footerLabel}</Link>
           </p>
         )}
       </section>

@@ -1,14 +1,9 @@
 import Form from "@/components/form/Form";
+import GuestOnly from "@/components/auth/GuestOnly";
+
 import { signIn } from "@/lib/actions/auth-actions";
-import { getCurrentUser } from "@/lib/auth";
-import { redirect } from "next/navigation";
 
-export default async function LoginPage() {
-  const user = await getCurrentUser();
-  if (user) {
-    redirect("/dashboard");
-  }
-
+export default function LoginPage() {
   const headerTitle = "Welcome Back";
 
   const headerMessage =
@@ -36,15 +31,17 @@ export default async function LoginPage() {
   ];
 
   return (
-    <Form
-      headerTitle={headerTitle}
-      headerMessage={headerMessage}
-      formElements={formElements}
-      submitMessage={submitMessage}
-      action={signIn}
-      footerText="Don't have an account?"
-      footerHref="/sign-up"
-      footerLabel="Create an account"
-    />
+    <GuestOnly>
+      <Form
+        headerTitle={headerTitle}
+        headerMessage={headerMessage}
+        formElements={formElements}
+        submitMessage={submitMessage}
+        action={signIn}
+        footerText="Don't have an account?"
+        footerHref="/sign-up"
+        footerLabel="Create an account"
+      />
+    </GuestOnly>
   );
 }
